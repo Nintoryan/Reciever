@@ -182,19 +182,27 @@ namespace Reciever
         }
         public IPv4Response(string binaryString)
         {
-            var message = binaryString.Split(' ');
-            Version = Convert.ToInt32(message[0]);
-            HeaderLength = Convert.ToInt32(message[1]);
-            TOS = Convert.ToInt32(message[2]);
-            TotalLength = Convert.ToInt32(message[3]);
-            Identification = Convert.ToInt32(message[4]);
-            Flags = Convert.ToInt32(message[5]);
-            FragmentOffset = Convert.ToInt32(message[6]);
-            TTL = Convert.ToInt32(message[7]);
-            Proto = Convert.ToInt32(message[8]);
-            HeaderChecksum = Convert.ToInt32(message[9]);
-            SourceIPAddress = Convert.ToUInt32(message[10]);
-            DestinationIPAddress = Convert.ToUInt32(message[11]);
+            var cleared = "";
+            foreach(var c  in binaryString)
+            {
+                if(c == '0' || c == '1' || c == ' ')
+                {
+                    cleared += c;
+                }
+            }
+            var message = cleared.Split(' ');
+            Version = Convert.ToInt32(message[0],2);
+            HeaderLength = Convert.ToInt32(message[1],2);
+            TOS = Convert.ToInt32(message[2],2);
+            TotalLength = Convert.ToInt32(message[3],2);
+            Identification = Convert.ToInt32(message[4], 2);
+            Flags = Convert.ToInt32(message[5], 2);
+            FragmentOffset = Convert.ToInt32(message[6], 2);
+            TTL = Convert.ToInt32(message[7], 2);
+            Proto = Convert.ToInt32(message[8], 2);
+            HeaderChecksum = Convert.ToInt32(message[9], 2);
+            SourceIPAddress = Convert.ToUInt32(message[10],2);
+            DestinationIPAddress = Convert.ToUInt32(message[11], 2);
         }
         public void SetHiddenMessage(string hiddenMessage)
         {
