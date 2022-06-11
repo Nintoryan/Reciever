@@ -56,6 +56,9 @@ namespace Reciever
                         case 0:
                             Invoke(() => { messageType.Text = "HTTP/2"; });
                             break;
+                        case 1:
+                            Invoke(() => { messageType.Text = "IPv4 Header"; });
+                            break;
                         default:
                             Invoke(() => { messageType.Text = "Неизвестный тип пакета"; });
                             break;
@@ -74,13 +77,32 @@ namespace Reciever
                         speed.Text = $"{byteAmount / timeElapsed / 1000000d} МБайт/c";
                         byteShow.Text = "";
                         var stringMessage = Encoding.UTF8.GetString(data);
-                        var httpResponse = new HTTP2Response(stringMessage);
-                        bitShow.Text = httpResponse.ToString(false);
-                        recievedMessage.Text = httpResponse.ToString(true);
-                        hiddenMessageData.Text = httpResponse.GetHiddenBinary();
-                        _hiddenMessage += httpResponse.GetHiddenBinary();
-                        hiddenMessageWhole.Text += httpResponse.GetHiddenBinary();
-                        hiddenText.Text = BinaryStringToUTF8(_hiddenMessage);
+                        switch (data[0])
+                        {
+                            case 0:
+                                var httpResponse = new HTTP2Response(stringMessage);
+                                bitShow.Text = httpResponse.ToString(false);
+                                recievedMessage.Text = httpResponse.ToString(true);
+                                hiddenMessageData.Text = httpResponse.GetHiddenBinary();
+                                _hiddenMessage += httpResponse.GetHiddenBinary();
+                                hiddenMessageWhole.Text += httpResponse.GetHiddenBinary();
+                                hiddenText.Text = BinaryStringToUTF8(_hiddenMessage);
+                                break;
+                            case 1:
+                                var ipv4 = new IPv4Response(stringMessage);
+                                bitShow.Text = ipv4.ToString(false);
+                                recievedMessage.Text = ipv4.ToString(true);
+                                hiddenMessageData.Text = ipv4.GetHiddenBinary();
+                                _hiddenMessage += ipv4.GetHiddenBinary();
+                                hiddenMessageWhole.Text += ipv4.GetHiddenBinary();
+                                hiddenText.Text = BinaryStringToUTF8(_hiddenMessage);
+                                break;
+                            default:
+                                Invoke(() => { MessageBox.Show($"Неизвестный тип пакета",
+                                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error); });
+                                break;
+                        }
+
                     });
                 }
             }
